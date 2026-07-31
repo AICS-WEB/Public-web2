@@ -1,28 +1,47 @@
 import { useEffect, useRef, useState } from "react";
-import { publicationGroups } from "./data/publications.js";
+import { fetchPublicationArchive } from "./data/publications.js";
 
-const publicationCount = publicationGroups.reduce(
-  (total, group) => total + group.items.length,
-  0,
-);
-
-const publicationYears = publicationGroups
-  .map((group) => group.year)
-  .filter((year) => /^\d{4}$/.test(year));
-
-function scholarLink(citation) {
-  return `https://scholar.google.com/scholar?q=${encodeURIComponent(citation)}`;
-}
+const emptyArchive = {
+  groups: [],
+  years: [],
+  publicationCount: 0,
+  latestYear: null,
+  earliestYear: null,
+};
 
 export default function PublicationPage() {
   let publicationIndex = 0;
-  const [currentYear, setCurrentYear] = useState(publicationYears[0]);
-  const [yearQuery, setYearQuery] = useState(publicationYears[0]);
+  const [archive, setArchive] = useState(emptyArchive);
+  const [archiveStatus, setArchiveStatus] = useState("loading");
+  const [currentYear, setCurrentYear] = useState("");
+  const [yearQuery, setYearQuery] = useState("");
   const [yearError, setYearError] = useState("");
   const [showYearNav, setShowYearNav] = useState(false);
   const yearNavigationTarget = useRef(null);
+  const publicationYears = archive.years;
 
   useEffect(() => {
+    const controller = new AbortController();
+
+    fetchPublicationArchive({ signal: controller.signal })
+      .then((nextArchive) => {
+        setArchive(nextArchive);
+        setCurrentYear(nextArchive.latestYear || "");
+        setArchiveStatus("ready");
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error(error);
+          setArchiveStatus("error");
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (publicationYears.length === 0) return undefined;
+
     let frame = 0;
     let scrollSettleTimer = 0;
 
@@ -39,8 +58,8 @@ export default function PublicationPage() {
           }
         });
 
-        const archive = document.getElementById("publication-archive");
-        const archiveRect = archive?.getBoundingClientRect();
+        const archiveElement = document.getElementById("publication-archive");
+        const archiveRect = archiveElement?.getBoundingClientRect();
         setShowYearNav(
           Boolean(
             archiveRect &&
@@ -72,12 +91,16 @@ export default function PublicationPage() {
       window.clearTimeout(scrollSettleTimer);
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [publicationYears]);
 
   useEffect(() => {
     setYearQuery(currentYear);
     setYearError("");
   }, [currentYear]);
+
+  const yearRangeError = archive.earliestYear && archive.latestYear
+    ? `Enter a year from ${archive.earliestYear} to ${archive.latestYear}`
+    : "Enter an available publication year";
 
   const jumpToYear = (year) => {
     setYearError("");
@@ -95,7 +118,7 @@ export default function PublicationPage() {
     const year = yearQuery.trim();
 
     if (!publicationYears.includes(year)) {
-      setYearError("Enter a year from 2016 to 2026");
+      setYearError(yearRangeError);
       return;
     }
 
@@ -110,7 +133,7 @@ export default function PublicationPage() {
     if (publicationYears.includes(year)) {
       jumpToYear(year);
     } else if (year.length === 4) {
-      setYearError("Enter a year from 2016 to 2026");
+      setYearError(yearRangeError);
     }
   };
 
@@ -118,7 +141,7 @@ export default function PublicationPage() {
   const newerYear =
     currentYearIndex > 0 ? publicationYears[currentYearIndex - 1] : null;
   const olderYear =
-    currentYearIndex < publicationYears.length - 1
+    currentYearIndex >= 0 && currentYearIndex < publicationYears.length - 1
       ? publicationYears[currentYearIndex + 1]
       : null;
 
@@ -131,7 +154,11 @@ export default function PublicationPage() {
       >
         <div className="publication-page-kicker publication-page-enter">
           <span>Research archive</span>
-          <span>2016 — 2026</span>
+          <span>
+            {archive.earliestYear && archive.latestYear
+              ? `${archive.earliestYear} — ${archive.latestYear}`
+              : "Loading archive"}
+          </span>
         </div>
 
         <h1
@@ -149,15 +176,15 @@ export default function PublicationPage() {
           <dl>
             <div>
               <dt>Works</dt>
-              <dd>{publicationCount}</dd>
+              <dd>{archive.publicationCount}</dd>
             </div>
             <div>
               <dt>Years</dt>
-              <dd>11</dd>
+              <dd>{archive.years.length}</dd>
             </div>
             <div>
               <dt>Latest</dt>
-              <dd>2026</dd>
+              <dd>{archive.latestYear || "—"}</dd>
             </div>
           </dl>
         </div>
@@ -169,11 +196,23 @@ export default function PublicationPage() {
           <h2>Selected<br />Works</h2>
         </header>
 
+        {archiveStatus === "loading" && (
+          <p className="publication-data-state" role="status">
+            논문 정보를 불러오는 중입니다.
+          </p>
+        )}
+
+        {archiveStatus === "error" && (
+          <p className="publication-data-state" role="alert">
+            논문 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
+          </p>
+        )}
+
         <div className="publication-year-groups">
-          {publicationGroups.map((group) => (
+          {archive.groups.map((group) => (
             <section
-              className="publication-year-group"
-              id={`publication-year-${group.year.toLowerCase()}`}
+              className="publication-year-group is-visible"
+              id={`publication-year-${group.year}`}
               data-reveal
               key={group.year}
             >
@@ -185,27 +224,31 @@ export default function PublicationPage() {
               <div className="publication-rows">
                 {group.items.map((publication) => {
                   publicationIndex += 1;
-                  const publicationNumber = publicationCount - publicationIndex + 1;
-                  const direct = Boolean(publication.url);
+                  const publicationNumber =
+                    archive.publicationCount - publicationIndex + 1;
 
                   return (
                     <a
                       className="publication-row"
-                      href={publication.url || scholarLink(publication.citation)}
+                      href={publication.url}
                       target="_blank"
                       rel="noreferrer"
-                      aria-label={`${publication.citation} — ${direct ? "full text" : "find paper"}`}
-                      key={publication.citation}
+                      aria-label={`${publication.citation} — ${
+                        publication.direct ? "full text" : "find paper"
+                      }`}
+                      key={publication.id}
                     >
                       <span className="publication-row-number">
                         {String(publicationNumber).padStart(2, "0")}
                       </span>
-                      <span className="publication-row-type">{publication.type}</span>
+                      <span className="publication-row-type">
+                        {publication.type}
+                      </span>
                       <span className="publication-row-citation">
                         {publication.citation}
                       </span>
                       <span className="publication-row-link">
-                        {direct ? "Full text" : "Find paper"}
+                        {publication.direct ? "Full text" : "Find paper"}
                         <span aria-hidden="true">↗</span>
                       </span>
                     </a>

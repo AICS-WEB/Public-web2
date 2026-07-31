@@ -11,11 +11,8 @@ import {
   publications as homePublications,
   recentActivities,
 } from "../src/data/home.js";
-import { semesterData } from "../src/data/lectures.js";
 import { alumni, currentMembers, theses } from "../src/data/members.js";
 import { career, education, profileDetails, researchFocus } from "../src/data/profile.js";
-import { publicationGroups } from "../src/data/publications.js";
-import { researchAreas, researchProjects } from "../src/data/research.js";
 import { homeSettings, siteSettings } from "../src/data/site.js";
 
 const digest = (value) =>
@@ -62,26 +59,6 @@ export const contentRecords = [
   ...mapRecords("profile_career", career, (item) => `${item.period}-${item.role}`),
   ...researchFocus.map((name, index) =>
     record("research_focus", name, { name }, index + 1),
-  ),
-  ...publicationGroups.flatMap((group) =>
-    group.items.map((publication, index) =>
-      record(
-        "publications",
-        `${group.year}-${publication.citation}`,
-        { year: group.year, ...publication },
-        index + 1,
-      ),
-    ),
-  ),
-  ...mapRecords("research_areas", researchAreas, (item) => item.title),
-  ...mapRecords("research_projects", researchProjects, (item) => item.title),
-  ...Object.entries(semesterData).map(([semesterCode, semester], index) =>
-    record(
-      "lecture_semesters",
-      semesterCode,
-      { semesterCode, ...semester },
-      index + 1,
-    ),
   ),
   ...mapRecords("current_members", currentMembers, (item) => item.name),
   ...mapRecords("alumni", alumni, (item) => item.name),

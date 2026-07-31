@@ -1352,6 +1352,15 @@ button {
   transition: opacity 0.9s, transform 0.9s;
 }
 
+.publication-data-state {
+  width: min(100%, 760px);
+  min-height: 180px;
+  margin: 0 0 clamp(70px, 8vw, 140px) auto;
+  color: var(--accent);
+  font-size: clamp(16px, 1.2vw, 22px);
+  line-height: 1.4;
+}
+
 .publication-year {
   position: sticky;
   top: 90px;
@@ -1731,6 +1740,15 @@ button {
   opacity: 0;
   transform: translateY(50px);
   transition: opacity 0.9s, transform 0.9s;
+}
+
+.research-data-state {
+  width: min(100%, 760px);
+  min-height: 180px;
+  margin: 0 0 clamp(70px, 8vw, 140px) auto;
+  color: var(--accent);
+  font-size: clamp(16px, 1.2vw, 22px);
+  line-height: 1.4;
 }
 
 .research-directions-heading > span,

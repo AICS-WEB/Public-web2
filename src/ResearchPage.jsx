@@ -1,6 +1,36 @@
-import { researchAreas, researchProjects } from "./data/research.js";
+import { useEffect, useState } from "react";
+import { fetchResearchContent } from "./data/research.js";
+
+const emptyResearchContent = {
+  researchAreas: [],
+  researchProjects: [],
+  activeThrough: null,
+};
 
 export default function ResearchPage() {
+  const [content, setContent] = useState(emptyResearchContent);
+  const [contentStatus, setContentStatus] = useState("loading");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchResearchContent({ signal: controller.signal })
+      .then((nextContent) => {
+        setContent(nextContent);
+        setContentStatus("ready");
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error(error);
+          setContentStatus("error");
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  const { researchAreas, researchProjects, activeThrough } = content;
+
   return (
     <main className="research-page">
       <section
@@ -28,15 +58,15 @@ export default function ResearchPage() {
           <dl>
             <div>
               <dt>Core areas</dt>
-              <dd>03</dd>
+              <dd>{String(researchAreas.length).padStart(2, "0")}</dd>
             </div>
             <div>
               <dt>Projects</dt>
-              <dd>06</dd>
+              <dd>{String(researchProjects.length).padStart(2, "0")}</dd>
             </div>
             <div>
               <dt>Active through</dt>
-              <dd>2029</dd>
+              <dd>{activeThrough || "—"}</dd>
             </div>
           </dl>
         </div>
@@ -48,9 +78,25 @@ export default function ResearchPage() {
           <h2>Three Ways<br />We Build AI</h2>
         </header>
 
+        {contentStatus === "loading" && (
+          <p className="research-data-state" role="status">
+            연구 정보를 불러오는 중입니다.
+          </p>
+        )}
+
+        {contentStatus === "error" && (
+          <p className="research-data-state" role="alert">
+            연구 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
+          </p>
+        )}
+
         <div className="research-area-list">
           {researchAreas.map((area) => (
-            <article className="research-area" data-reveal key={area.number}>
+            <article
+              className="research-area is-visible"
+              data-reveal
+              key={area.id}
+            >
               <span className="research-area-number">{area.number}</span>
               <div className="research-area-content">
                 <h3>{area.title}</h3>
@@ -79,7 +125,11 @@ export default function ResearchPage() {
 
         <div className="research-project-list">
           {researchProjects.map((project, index) => (
-            <article className="research-project" data-reveal key={project.title}>
+            <article
+              className="research-project is-visible"
+              data-reveal
+              key={project.id}
+            >
               <span className="research-project-number">
                 {String(researchProjects.length - index).padStart(2, "0")}
               </span>
