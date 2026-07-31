@@ -4,14 +4,13 @@ import {
   researchFields,
   undergraduateApplicationTypes,
 } from "../src/data/contact.js";
-import { events } from "../src/data/events.js";
 import {
   partnerships,
   projects,
   publications as homePublications,
   recentActivities,
 } from "../src/data/home.js";
-import { alumni, currentMembers, theses } from "../src/data/members.js";
+import { theses } from "../src/data/members.js";
 import { career, education, profileDetails, researchFocus } from "../src/data/profile.js";
 import { homeSettings, siteSettings } from "../src/data/site.js";
 
@@ -60,12 +59,7 @@ export const contentRecords = [
   ...researchFocus.map((name, index) =>
     record("research_focus", name, { name }, index + 1),
   ),
-  ...mapRecords("current_members", currentMembers, (item) => item.name),
-  ...mapRecords("alumni", alumni, (item) => item.name),
   ...mapRecords("theses", theses, (item) => `${item.year}-${item.author}-${item.title}`),
-  ...events.map((event, index) =>
-    record("events", event.id, event, index + 1),
-  ),
   ...researchFields.map((name, index) =>
     record("contact_research_fields", name, { name }, index + 1),
   ),

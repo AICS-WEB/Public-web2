@@ -1,0 +1,6 @@
+email,password_hash,name,role,account_status,student_id,department,program,enrollment_year,graduation_year,grade_override,research_topic,profile_image,phone,bio,github_url,linkedin_url,is_public_profile,is_alumni,preferred_language
+no.jaejun@aics.local,$2b$12$NunIcBWbAGtW0EdnzHC9Fu2Xu6Q13KC.B9npH4I4f/N33gNdaX4CG,노재준,member,approved,20260001,컴퓨터소프트웨어공학과,undergrad,2026,,,,/assets/Members/no-jaejun.jpg,,,,,true,false,ko
+no.gyeongtae@aics.local,$2b$12$NunIcBWbAGtW0EdnzHC9Fu2Xu6Q13KC.B9npH4I4f/N33gNdaX4CG,노경태,member,approved,20260002,컴퓨터소프트웨어공학과,undergrad,2026,,,,/assets/Members/no-gyeongtae.jpg,,,,,true,false,ko
+shin.donghwa@aics.local,$2b$12$NunIcBWbAGtW0EdnzHC9Fu2Xu6Q13KC.B9npH4I4f/N33gNdaX4CG,신동화,member,approved,20260003,컴퓨터소프트웨어공학과,undergrad,2026,,,,/assets/Members/shin-donghwa.jpg,,,,,true,false,ko
+lee.hyeonjun@aics.local,$2b$12$NunIcBWbAGtW0EdnzHC9Fu2Xu6Q13KC.B9npH4I4f/N33gNdaX4CG,이현준,member,approved,20260004,컴퓨터소프트웨어공학과,undergrad,2026,,,,/assets/Members/lee-hyeonjun.jpg,,,,,true,false,ko
+heo.juwan@aics.local,$2b$12$NunIcBWbAGtW0EdnzHC9Fu2Xu6Q13KC.B9npH4I4f/N33gNdaX4CG,허주완,member,approved,20260005,컴퓨터소프트웨어공학과,undergrad,2026,,,,/assets/Members/heo-juwan.jpg,,,,,true,false,ko

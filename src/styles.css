@@ -2516,6 +2516,15 @@ button {
   letter-spacing: -0.075em;
 }
 
+.members-data-state {
+  width: min(100%, 760px);
+  min-height: 180px;
+  margin: 0 0 clamp(70px, 8vw, 140px) auto;
+  color: var(--accent);
+  font-size: clamp(16px, 1.2vw, 22px);
+  line-height: 1.4;
+}
+
 .member-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2891,6 +2900,13 @@ button {
   font-size: clamp(16px, 1.36vw, 26px);
   line-height: 1.05;
   letter-spacing: -0.03em;
+}
+
+.events-data-state {
+  margin: 0 0 clamp(80px, 10vw, 170px);
+  color: var(--accent);
+  font-size: clamp(16px, 1.2vw, 22px);
+  line-height: 1.4;
 }
 
 .event-entry {

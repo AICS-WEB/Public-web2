@@ -1,44 +1,43 @@
-// Canonical content data shared by the public site and database seed.
-export const currentMembers = [
-  { name: "노재준", image: "/assets/Members/no-jaejun.jpg" },
-  { name: "노경태", image: "/assets/Members/no-gyeongtae.jpg" },
-  { name: "신동화", image: "/assets/Members/shin-donghwa.jpg" },
-  { name: "박성진", image: "/assets/Members/park-sungjin.jpg" },
-  { name: "이현준", image: "/assets/Members/lee-hyeonjun.jpg" },
-  { name: "허주완", image: "/assets/Members/heo-juwan.jpg" },
-];
+const apiBaseUrl = (import.meta.env?.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
-export const alumni = [
-  {
-    name: "Woojin Cho",
-    degree: "M.S. · 2024",
-    history: [
-      "B.A., Chinese Language and Literature, Chungbuk National University",
-      "M.S., Computer Science, Semyung University",
-    ],
-    interests: [
-      "Stock Forecasting",
-      "Anomaly Detection",
-      "Machine Learning",
-      "Deep Learning",
-    ],
-  },
-  {
-    name: "Zhipeng Dong",
-    degree: "M.S. · 2024",
-    history: [
-      "B.E., Electronic Information Engineering, Nantong University",
-      "Computer Teacher & Information Center, Lianyungang Technical School",
-      "M.S., Computer Engineering, Semyung University",
-    ],
-    interests: [
-      "Stock Forecasting",
-      "Deep Learning",
-      "Web Design",
-      "Network Security",
-    ],
-  },
-];
+const programLabels = {
+  undergrad: "Undergraduate Researcher",
+  master: "M.S. Researcher",
+  phd: "Ph.D. Researcher",
+  researcher: "Researcher",
+};
+
+function normalizeMember(member) {
+  return {
+    id: member.id,
+    name: member.name,
+    image: member.profile_image,
+    department: member.department,
+    program: programLabels[member.program] || member.program,
+    enrollmentYear: member.enrollment_year,
+    graduationYear: member.graduation_year,
+    gradeDisplay: member.grade_override || member.grade_display,
+    researchTopic: member.research_topic,
+    bio: member.bio,
+    githubUrl: member.github_url,
+    linkedinUrl: member.linkedin_url,
+  };
+}
+
+export async function fetchMembers({ signal } = {}) {
+  const response = await fetch(`${apiBaseUrl}/api/public/members`, { signal });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok || !payload?.success || !payload.data) {
+    throw new Error(payload?.message || "멤버 정보를 불러오지 못했습니다.");
+  }
+
+  return {
+    currentMembers: (payload.data.current_students || []).map(normalizeMember),
+    alumni: (payload.data.alumni || []).map(normalizeMember),
+    counts: payload.data.counts || { current: 0, alumni: 0, total: 0 },
+  };
+}
 
 export const theses = [
   {

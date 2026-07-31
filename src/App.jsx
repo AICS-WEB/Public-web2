@@ -8,7 +8,9 @@ import LecturePage from "./LecturePage.jsx";
 import MembersPage from "./MembersPage.jsx";
 import EventsPage from "./EventsPage.jsx";
 import ContactPage from "./ContactPage.jsx";
-import { partnerships, projects, publications, recentActivities } from "./data/home.js";
+import { projects, publications } from "./data/home.js";
+import { fetchLabEvents, toRecentActivity } from "./data/events.js";
+import { fetchPartnerships } from "./data/partnerships.js";
 import { homeSettings, siteSettings } from "./data/site.js";
 
 const menuLinks = [
@@ -393,6 +395,30 @@ function Studio() {
 }
 
 function Activity() {
+  const [activities, setActivities] = useState([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchLabEvents({ signal: controller.signal })
+      .then((events) => {
+        const recentEvents = [...events]
+          .sort((left, right) => right.dateTime.localeCompare(left.dateTime))
+          .slice(0, 3);
+
+        setActivities(
+          recentEvents.map((event, index) =>
+            toRecentActivity(event, index, recentEvents.length),
+          ),
+        );
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") console.error(error);
+      });
+
+    return () => controller.abort();
+  }, []);
+
   return (
     <section className="activity section-pad" id="activity">
       <header className="activity-intro" data-reveal>
@@ -414,7 +440,7 @@ function Activity() {
       </header>
 
       <div className="activity-grid">
-        {recentActivities.map((activity) => (
+        {activities.map((activity) => (
           <a
             className="activity-card"
             href={activity.href}
@@ -423,7 +449,7 @@ function Activity() {
           >
             <figure className="activity-image">
               <img src={activity.image} alt="" loading="lazy" />
-              <span>{activity.number} / 03</span>
+              <span>{activity.number} / {activity.total}</span>
             </figure>
             <div className="activity-card-copy">
               <div className="activity-meta">
@@ -479,6 +505,20 @@ function Playground() {
 }
 
 function Footer({ currentPath, onNavigate }) {
+  const [partnerships, setPartnerships] = useState([]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchPartnerships({ signal: controller.signal })
+      .then(setPartnerships)
+      .catch((error) => {
+        if (error.name !== "AbortError") console.error(error);
+      });
+
+    return () => controller.abort();
+  }, []);
+
   return (
     <footer className="footer section-pad">
       <div className="footer-brand-panel">
@@ -534,7 +574,7 @@ function Footer({ currentPath, onNavigate }) {
                       target="_blank"
                       rel="noreferrer"
                       tabIndex={copyIndex === 1 ? -1 : undefined}
-                      key={`${copyIndex}-${partnership.name}`}
+                      key={`${copyIndex}-${partnership.id}`}
                     >
                       <img src={partnership.image} alt="" loading="lazy" />
                       <h3>{partnership.name}</h3>
