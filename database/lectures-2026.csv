@@ -1,0 +1,9 @@
+course_code,title_ko,title_en,semester,academic_year,day_of_week,start_time,end_time,room,display_order
+CSE 201,모바일프로그래밍,Mobile Programming,spring,2026,Mon,10:00:00,12:00:00,M507,1
+CSE 312,인공지능,Artificial Intelligence,spring,2026,Tue,13:00:00,15:00:00,M502,2
+CSE 324,HCI프로그래밍,HCI Programming,spring,2026,Thu,10:00:00,12:00:00,M507,3
+CSE 491,캡스톤디자인,Capstone Design,spring,2026,Fri,13:00:00,16:00:00,Project Studio,4
+CSE 101,창의공학설계,Creative Engineering Design,fall,2026,Mon,13:00:00,15:00:00,Project Studio,1
+CSE 231,로봇프로그래밍,Robot Programming,fall,2026,Tue,10:00:00,12:00:00,Robotics Lab,2
+CSE 341,영상처리,Image Processing,fall,2026,Wed,13:00:00,15:00:00,M502,3
+CSE 492,캡스톤디자인,Capstone Design,fall,2026,Fri,10:00:00,13:00:00,Project Studio,4

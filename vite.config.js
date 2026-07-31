@@ -69,5 +69,13 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), localApplicationApis()],
+    server: {
+      proxy: {
+        '/api/public': {
+          target: env.VITE_API_PROXY_TARGET || 'http://127.0.0.1:4000',
+          changeOrigin: true,
+        },
+      },
+    },
   }
 })

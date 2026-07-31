@@ -2126,6 +2126,15 @@ button {
   letter-spacing: -0.035em;
 }
 
+.lecture-data-state {
+  width: min(100%, 760px);
+  min-height: 180px;
+  margin: 0 0 0 auto;
+  color: var(--accent);
+  font-size: clamp(16px, 1.2vw, 22px);
+  line-height: 1.4;
+}
+
 .lecture-schedule-viewport {
   width: 100%;
   overflow-x: auto;
