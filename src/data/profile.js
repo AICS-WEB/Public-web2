@@ -1,59 +1,45 @@
-// Canonical content data shared by the public site and database seed.
-export const profileDetails = {
-  name: "Yoojeong Song",
-  position: "Assistant Professor",
-  department: "Computer Software Engineering",
-  university: "Soonchunhyang University",
-  introduction:
-    "Building practical and human-centered artificial intelligence through prediction, accessibility, and explainability.",
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+
+export const emptyProfile = {
+  profileDetails: {
+    name: "",
+    email: "",
+    position: "",
+    department: "",
+    university: "",
+    introduction: "",
+    profileImageUrl: "",
+  },
+  education: [],
+  career: [],
+  researchFocus: [],
 };
 
-export const education = [
-  {
-    period: "2011.03 — 2015.02",
-    degree: "B.S. in Multimedia Science",
-    institution: "Sookmyung Women's University",
-  },
-  {
-    period: "2015.03 — 2021.02",
-    degree: "Ph.D. in IT Engineering",
-    institution: "Sookmyung Women's University",
-  },
-];
+export async function fetchProfessorProfile({ signal } = {}) {
+  const response = await fetch(`${apiBaseUrl}/api/public/professor`, { signal });
+  const payload = await response.json().catch(() => null);
 
-export const career = [
-  {
-    period: "2025.09 — Present",
-    role: "Assistant Professor",
-    institution: "Soonchunhyang University · Computer Software Engineering",
-  },
-  {
-    period: "2022.04 — 2025.08",
-    role: "Assistant Professor",
-    institution: "Semyung University · School of Computer Science",
-  },
-  {
-    period: "2021.09 — 2022.03",
-    role: "Principal Researcher",
-    institution: "ICT Convergence Research Institute, Sookmyung Women's University",
-  },
-  {
-    period: "2020.09 — 2022.02",
-    role: "Lecturer",
-    institution: "Seoul National University of Science and Technology",
-  },
-  {
-    period: "2020.09 — 2021.08",
-    role: "Lecturer",
-    institution: "Sookmyung Women's University",
-  },
-];
+  if (!response.ok || !payload?.success || !payload.data) {
+    throw new Error(payload?.message || "교수 프로필을 불러오지 못했습니다.");
+  }
 
-export const researchFocus = [
-  "Artificial Intelligence",
-  "Machine Learning",
-  "Financial Forecasting",
-  "Digital Accessibility",
-  "AI Applications",
-  "Explainable AI",
-];
+  const professor = payload.data;
+
+  return {
+    profileDetails: {
+      id: professor.id,
+      name: professor.name || "",
+      email: professor.email || "",
+      position: professor.position || "",
+      department: professor.department || "",
+      university: professor.university || "",
+      introduction: professor.introduction || "",
+      profileImageUrl: professor.profile_image_url || "",
+    },
+    education: Array.isArray(professor.education) ? professor.education : [],
+    career: Array.isArray(professor.career) ? professor.career : [],
+    researchFocus: Array.isArray(professor.research_focus)
+      ? professor.research_focus
+      : [],
+  };
+}

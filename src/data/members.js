@@ -25,34 +25,30 @@ function normalizeMember(member) {
 }
 
 export async function fetchMembers({ signal } = {}) {
-  const response = await fetch(`${apiBaseUrl}/api/public/members`, { signal });
-  const payload = await response.json().catch(() => null);
+  const [membersResponse, thesesResponse] = await Promise.all([
+    fetch(`${apiBaseUrl}/api/public/members`, { signal }),
+    fetch(`${apiBaseUrl}/api/public/theses`, { signal }),
+  ]);
+  const [membersPayload, thesesPayload] = await Promise.all([
+    membersResponse.json().catch(() => null),
+    thesesResponse.json().catch(() => null),
+  ]);
 
-  if (!response.ok || !payload?.success || !payload.data) {
-    throw new Error(payload?.message || "멤버 정보를 불러오지 못했습니다.");
+  if (!membersResponse.ok || !membersPayload?.success || !membersPayload.data) {
+    throw new Error(membersPayload?.message || "멤버 정보를 불러오지 못했습니다.");
+  }
+  if (
+    !thesesResponse.ok ||
+    !thesesPayload?.success ||
+    !Array.isArray(thesesPayload.data)
+  ) {
+    throw new Error(thesesPayload?.message || "학위논문 정보를 불러오지 못했습니다.");
   }
 
   return {
-    currentMembers: (payload.data.current_students || []).map(normalizeMember),
-    alumni: (payload.data.alumni || []).map(normalizeMember),
-    counts: payload.data.counts || { current: 0, alumni: 0, total: 0 },
+    currentMembers: (membersPayload.data.current_students || []).map(normalizeMember),
+    alumni: (membersPayload.data.alumni || []).map(normalizeMember),
+    counts: membersPayload.data.counts || { current: 0, alumni: 0, total: 0 },
+    theses: thesesPayload.data,
   };
 }
-
-export const theses = [
-  {
-    year: "2024",
-    author: "Zhipeng Dong · 동지붕",
-    title: "신경망 기반 중국 주식시장 분석 및 예측",
-  },
-  {
-    year: "2024",
-    author: "Woojin Cho · 조우진",
-    title: "주가 예측을 위한 어텐션메커니즘 활용 신경망 모델 개발",
-  },
-  {
-    year: "2025",
-    author: "Heumgui Oh · 오흠귀",
-    title: "획 요소 검출 기반의 이중 문자체 글꼴 추천 시스템 설계",
-  },
-];

@@ -1,10 +1,9 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  fetchResearchFields,
   graduateApplicationSettings,
-  researchFields,
   undergraduateApplicationTypes,
 } from "./data/contact.js";
-import { siteSettings } from "./data/site.js";
 
 const readFileAsBase64 = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
@@ -13,13 +12,26 @@ const readFileAsBase64 = (file) => new Promise((resolve, reject) => {
   reader.readAsDataURL(file);
 });
 
-export default function ContactPage() {
+export default function ContactPage({ siteSettings }) {
   const [status, setStatus] = useState({ type: "idle", message: "" });
   const [applicantPath, setApplicantPath] = useState("");
   const [researchInterest, setResearchInterest] = useState("");
+  const [researchFields, setResearchFields] = useState([]);
   const [portfolioLinks, setPortfolioLinks] = useState([{ id: 0 }]);
   const [graduateFile, setGraduateFile] = useState(null);
   const nextLinkId = useRef(1);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchResearchFields({ signal: controller.signal })
+      .then(setResearchFields)
+      .catch((error) => {
+        if (error.name !== "AbortError") console.error(error);
+      });
+
+    return () => controller.abort();
+  }, []);
 
   const addPortfolioLink = () => {
     setPortfolioLinks((links) => [...links, { id: nextLinkId.current++ }]);

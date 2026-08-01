@@ -1,11 +1,34 @@
-import { career, education, profileDetails, researchFocus } from "./data/profile.js";
-import { siteSettings } from "./data/site.js";
+import { useEffect, useState } from "react";
+import { emptyProfile, fetchProfessorProfile } from "./data/profile.js";
 
 function ProfileArrow() {
   return <span aria-hidden="true">↗</span>;
 }
 
 export default function ProfilePage() {
+  const [profile, setProfile] = useState(emptyProfile);
+  const [profileStatus, setProfileStatus] = useState("loading");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchProfessorProfile({ signal: controller.signal })
+      .then((nextProfile) => {
+        setProfile(nextProfile);
+        setProfileStatus("ready");
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          console.error(error);
+          setProfileStatus("error");
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  const { profileDetails, education, career, researchFocus } = profile;
+
   return (
     <main className="profile-page">
       <section
@@ -35,8 +58,8 @@ export default function ProfilePage() {
             </div>
 
             <div className="profile-contact">
-              <a href={`mailto:${siteSettings.contactEmail}`}>
-                {siteSettings.contactEmail} <ProfileArrow />
+              <a href={`mailto:${profileDetails.email}`}>
+                {profileDetails.email} <ProfileArrow />
               </a>
               <p>{profileDetails.introduction}</p>
             </div>
@@ -44,11 +67,30 @@ export default function ProfilePage() {
 
           <div
             className="profile-portrait-space profile-enter"
-            aria-label="Professor portrait image area reserved"
+            aria-label={`${profileDetails.name} professor portrait`}
           >
-            <span>Portrait / reserved</span>
+            {profileDetails.profileImageUrl ? (
+              <img
+                src={profileDetails.profileImageUrl}
+                alt={`${profileDetails.name} professor portrait`}
+              />
+            ) : (
+              <span>Portrait / reserved</span>
+            )}
           </div>
         </div>
+
+        {profileStatus === "loading" && (
+          <p className="profile-data-state" role="status">
+            교수 프로필을 불러오는 중입니다.
+          </p>
+        )}
+
+        {profileStatus === "error" && (
+          <p className="profile-data-state" role="alert">
+            교수 프로필을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.
+          </p>
+        )}
       </section>
 
       <section className="profile-history profile-section" id="profile-history">

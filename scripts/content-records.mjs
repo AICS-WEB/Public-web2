@@ -1,18 +1,8 @@
 import { createHash } from "node:crypto";
 import {
   graduateApplicationSettings,
-  researchFields,
   undergraduateApplicationTypes,
 } from "../src/data/contact.js";
-import {
-  partnerships,
-  projects,
-  publications as homePublications,
-  recentActivities,
-} from "../src/data/home.js";
-import { theses } from "../src/data/members.js";
-import { career, education, profileDetails, researchFocus } from "../src/data/profile.js";
-import { homeSettings, siteSettings } from "../src/data/site.js";
 
 const digest = (value) =>
   createHash("sha1").update(String(value)).digest("hex").slice(0, 12);
@@ -41,26 +31,10 @@ const mapRecords = (collection, items, idSelector) =>
   );
 
 export const contentRecords = [
-  record("site_settings", "default", siteSettings, 1),
-  record("home_settings", "default", homeSettings, 1),
-  record("profile_details", "default", profileDetails, 1),
   record(
     "contact_settings",
     "default",
     { undergraduateApplicationTypes, graduateApplicationSettings },
     1,
-  ),
-  ...mapRecords("home_research_interests", projects, (item) => item.name),
-  ...mapRecords("home_featured_publications", homePublications, (item) => item.title),
-  ...mapRecords("research_partnerships", partnerships, (item) => item.name),
-  ...mapRecords("home_recent_activities", recentActivities, (item) => item.title),
-  ...mapRecords("profile_education", education, (item) => `${item.period}-${item.degree}`),
-  ...mapRecords("profile_career", career, (item) => `${item.period}-${item.role}`),
-  ...researchFocus.map((name, index) =>
-    record("research_focus", name, { name }, index + 1),
-  ),
-  ...mapRecords("theses", theses, (item) => `${item.year}-${item.author}-${item.title}`),
-  ...researchFields.map((name, index) =>
-    record("contact_research_fields", name, { name }, index + 1),
   ),
 ];

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { fetchMembers, theses } from "./data/members.js";
+import { fetchMembers } from "./data/members.js";
 
 const emptyMembers = {
   currentMembers: [],
   alumni: [],
+  theses: [],
   counts: { current: 0, alumni: 0, total: 0 },
 };
 
@@ -29,7 +30,7 @@ export default function MembersPage() {
     return () => controller.abort();
   }, []);
 
-  const { currentMembers, alumni, counts } = members;
+  const { currentMembers, alumni, theses, counts } = members;
 
   return (
     <main className="members-page">

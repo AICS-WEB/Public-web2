@@ -8,10 +8,10 @@ import LecturePage from "./LecturePage.jsx";
 import MembersPage from "./MembersPage.jsx";
 import EventsPage from "./EventsPage.jsx";
 import ContactPage from "./ContactPage.jsx";
-import { projects, publications } from "./data/home.js";
+import { fetchHomeContent } from "./data/home.js";
 import { fetchLabEvents, toRecentActivity } from "./data/events.js";
 import { fetchPartnerships } from "./data/partnerships.js";
-import { homeSettings, siteSettings } from "./data/site.js";
+import { emptySiteContent, fetchSiteContent } from "./data/site.js";
 
 const menuLinks = [
   { label: "Profile", href: "/profile", internal: true },
@@ -253,7 +253,7 @@ function Header({ compact, currentPath, onNavigate }) {
   );
 }
 
-function Hero({ showEntry }) {
+function Hero({ showEntry, homeSettings }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -290,7 +290,9 @@ function Hero({ showEntry }) {
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
         >
-          <source src={homeSettings.heroVideo} type="video/mp4" />
+          {homeSettings.heroVideo && (
+            <source src={homeSettings.heroVideo} type="video/mp4" />
+          )}
         </video>
         <div className="hero-shade" />
         <button
@@ -315,7 +317,7 @@ function Hero({ showEntry }) {
   );
 }
 
-function Work() {
+function Work({ projects }) {
   return (
     <section className="work section-pad" id="work">
       <div className="section-intro research-intro" data-reveal>
@@ -338,11 +340,13 @@ function Work() {
               <span>{project.role}</span>
             </div>
             <div className="project-thumb">
-              <img
-                src={project.image}
-                alt={`${project.field} research`}
-                loading="lazy"
-              />
+              {project.image && (
+                <img
+                  src={project.image}
+                  alt={`${project.field} research`}
+                  loading="lazy"
+                />
+              )}
             </div>
           </article>
         ))}
@@ -351,7 +355,7 @@ function Work() {
   );
 }
 
-function Studio() {
+function Studio({ publications }) {
   return (
     <section className="studio section-pad" id="studio">
       <div className="section-intro" data-reveal>
@@ -378,7 +382,9 @@ function Studio() {
               {String(index + 1).padStart(2, "0")}
             </span>
             <div className="publication-image">
-              <img src={publication.image} alt="" loading="lazy" />
+              {publication.image && (
+                <img src={publication.image} alt="" loading="lazy" />
+              )}
             </div>
             <div className="publication-content">
               <span className="publication-venue">{publication.venue}</span>
@@ -469,7 +475,7 @@ function Activity() {
   );
 }
 
-function Playground() {
+function Playground({ homeSettings }) {
   const address = homeSettings.address;
   const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
@@ -485,12 +491,14 @@ function Playground() {
 
       <div className="location-card" data-reveal>
         <div className="location-map">
-          <iframe
-            title="AICS 연구실 위치 지도"
-            src={mapUrl}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+          {address && (
+            <iframe
+              title="AICS 연구실 위치 지도"
+              src={mapUrl}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          )}
         </div>
         <div className="location-info">
           <span className="location-label">ADDRESS</span>
@@ -504,7 +512,7 @@ function Playground() {
   );
 }
 
-function Footer({ currentPath, onNavigate }) {
+function Footer({ currentPath, onNavigate, siteSettings }) {
   const [partnerships, setPartnerships] = useState([]);
 
   useEffect(() => {
@@ -614,14 +622,14 @@ function Footer({ currentPath, onNavigate }) {
   );
 }
 
-function HomePage({ showHeroEntry }) {
+function HomePage({ showHeroEntry, homeSettings, homeContent }) {
   return (
     <main>
-      <Hero showEntry={showHeroEntry} />
-      <Work />
-      <Studio />
+      <Hero showEntry={showHeroEntry} homeSettings={homeSettings} />
+      <Work projects={homeContent.projects} />
+      <Studio publications={homeContent.publications} />
       <Activity />
-      <Playground />
+      <Playground homeSettings={homeSettings} />
     </main>
   );
 }
@@ -632,6 +640,11 @@ export default function App() {
   const [showHomeIntro, setShowHomeIntro] = useState(
     window.location.pathname === "/",
   );
+  const [siteContent, setSiteContent] = useState(emptySiteContent);
+  const [homeContent, setHomeContent] = useState({
+    projects: [],
+    publications: [],
+  });
   const transitionTimers = useRef([]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -645,6 +658,26 @@ export default function App() {
 
   useSmoothScroll();
   useReveal(location.pathname);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchSiteContent({ signal: controller.signal })
+      .then(setSiteContent)
+      .catch((error) => {
+        if (error.name !== "AbortError") console.error(error);
+      });
+
+    fetchHomeContent({ signal: controller.signal })
+      .then(setHomeContent)
+      .catch((error) => {
+        if (error.name !== "AbortError") console.error(error);
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  const { siteSettings, homeSettings } = siteContent;
 
   useEffect(() => {
     if (isProfile) {
@@ -757,19 +790,29 @@ export default function App() {
         onNavigate={navigateWithTransition}
       />
       <Routes>
-        <Route path="/" element={<HomePage showHeroEntry={showHomeIntro} />} />
+        <Route
+          path="/"
+          element={
+            <HomePage
+              showHeroEntry={showHomeIntro}
+              homeSettings={homeSettings}
+              homeContent={homeContent}
+            />
+          }
+        />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/publication" element={<PublicationPage />} />
         <Route path="/research" element={<ResearchPage />} />
         <Route path="/lecture" element={<LecturePage />} />
         <Route path="/members" element={<MembersPage />} />
         <Route path="/events" element={<EventsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/contact" element={<ContactPage siteSettings={siteSettings} />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Footer
         currentPath={location.pathname}
         onNavigate={navigateWithTransition}
+        siteSettings={siteSettings}
       />
       {pageTransition && (
         <div
