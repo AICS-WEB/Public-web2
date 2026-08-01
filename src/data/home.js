@@ -37,7 +37,10 @@ export async function fetchHomeContent({ signal } = {}) {
     image: area.image_url || "",
   }));
 
-  const publications = publicationRows.slice(0, 4).map((publication) => ({
+  const publications = publicationRows
+    .filter((publication) => publication.is_featured === true)
+    .slice(0, 4)
+    .map((publication) => ({
     id: publication.id,
     title: publication.subtitle
       ? `${publication.title}: ${publication.subtitle}`
@@ -45,7 +48,7 @@ export async function fetchHomeContent({ signal } = {}) {
     venue: publication.venue || String(publication.year),
     url: publicationUrl(publication),
     image: publication.image_url || "",
-  }));
+    }));
 
   return { projects, publications };
 }

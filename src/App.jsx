@@ -80,17 +80,42 @@ function Arrow() {
 
 function useReveal(routeKey) {
   useEffect(() => {
-    const nodes = document.querySelectorAll("[data-reveal]");
     const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach(
-          (entry) =>
-            entry.isIntersecting && entry.target.classList.add("is-visible"),
-        ),
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
       { threshold: 0.12 },
     );
-    nodes.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
+
+    const observeRevealNodes = (root) => {
+      if (root instanceof Element && root.matches("[data-reveal]")) {
+        observer.observe(root);
+      }
+      root
+        .querySelectorAll?.("[data-reveal]")
+        .forEach((node) => observer.observe(node));
+    };
+
+    observeRevealNodes(document);
+
+    const mutationObserver = new MutationObserver((records) => {
+      records.forEach((record) => {
+        record.addedNodes.forEach((node) => {
+          if (node instanceof Element) observeRevealNodes(node);
+        });
+      });
+    });
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      mutationObserver.disconnect();
+      observer.disconnect();
+    };
   }, [routeKey]);
 }
 
