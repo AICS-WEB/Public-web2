@@ -3712,6 +3712,11 @@ button {
   transform: rotate(45deg);
 }
 
+.turnstile-container {
+  min-height: 65px;
+  margin-top: 24px;
+}
+
 .graduate-upload-submit {
   display: grid;
   grid-template-columns: 1fr auto;

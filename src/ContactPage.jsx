@@ -13,6 +13,55 @@ const readFileAsBase64 = (file) => new Promise((resolve, reject) => {
   reader.readAsDataURL(file);
 });
 
+const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY || "";
+
+function TurnstileWidget({ onToken }) {
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    if (!turnstileSiteKey) return undefined;
+
+    let widgetId;
+    let disposed = false;
+    const renderWidget = () => {
+      if (disposed || !containerRef.current || !window.turnstile) return;
+      widgetId = window.turnstile.render(containerRef.current, {
+        sitekey: turnstileSiteKey,
+        callback: onToken,
+        "expired-callback": () => onToken(""),
+        "error-callback": () => onToken(""),
+      });
+    };
+
+    let script = document.querySelector("script[data-aics-turnstile]");
+    if (window.turnstile) {
+      renderWidget();
+    } else if (script) {
+      script.addEventListener("load", renderWidget, { once: true });
+    } else {
+      script = document.createElement("script");
+      script.src =
+        "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.defer = true;
+      script.dataset.aicsTurnstile = "true";
+      script.addEventListener("load", renderWidget, { once: true });
+      document.head.appendChild(script);
+    }
+
+    return () => {
+      disposed = true;
+      script?.removeEventListener("load", renderWidget);
+      if (widgetId !== undefined && window.turnstile) {
+        window.turnstile.remove(widgetId);
+      }
+    };
+  }, [onToken]);
+
+  if (!turnstileSiteKey) return null;
+  return <div className="turnstile-container" ref={containerRef} />;
+}
+
 export default function ContactPage({ siteSettings }) {
   const [status, setStatus] = useState({ type: "idle", message: "" });
   const [applicantPath, setApplicantPath] = useState("");
@@ -20,6 +69,8 @@ export default function ContactPage({ siteSettings }) {
   const [researchFields, setResearchFields] = useState([]);
   const [portfolioLinks, setPortfolioLinks] = useState([{ id: 0 }]);
   const [graduateFile, setGraduateFile] = useState(null);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0);
   const nextLinkId = useRef(1);
 
   useEffect(() => {
@@ -48,6 +99,8 @@ export default function ContactPage({ siteSettings }) {
     setResearchInterest("");
     setPortfolioLinks([{ id: nextLinkId.current++ }]);
     setGraduateFile(null);
+    setTurnstileToken("");
+    setTurnstileResetKey((key) => key + 1);
   };
 
   const handleUndergraduateSubmit = async (event) => {
@@ -162,22 +215,34 @@ export default function ContactPage({ siteSettings }) {
           fileType: graduateFile.type,
           fileSize: graduateFile.size,
           fileContent,
+          website: String(formData.get("website") || ""),
+          turnstileToken,
         }),
       });
       const result = await response.json();
 
-      if (!response.ok || !result.success) throw new Error();
+      if (!response.ok || !result.success) {
+        const error = new Error();
+        error.status = response.status;
+        throw error;
+      }
 
       form.reset();
       setGraduateFile(null);
+      setTurnstileToken("");
+      setTurnstileResetKey((key) => key + 1);
       setStatus({
         type: "success",
         message: "대학원 지원서 파일이 교수님 이메일로 전송되었습니다.",
       });
-    } catch {
+    } catch (error) {
       setStatus({
         type: "error",
-        message: "지원서 파일을 보내지 못했습니다. 잠시 후 다시 시도해 주세요.",
+        message: error.status === 429
+          ? "요청이 너무 많습니다. 10분 후 다시 시도해 주세요."
+          : error.status === 403
+            ? "자동 제출 방지 인증에 실패했습니다. 다시 인증해 주세요."
+            : "지원서 파일을 보내지 못했습니다. 파일 형식을 확인한 뒤 다시 시도해 주세요.",
       });
     }
   };
@@ -428,9 +493,25 @@ export default function ContactPage({ siteSettings }) {
               <span aria-hidden="true">＋</span>
             </label>
 
+            <label className="application-botcheck" aria-hidden="true" hidden>
+              Website<input name="website" type="text" tabIndex="-1" autoComplete="off" />
+            </label>
+
+            <TurnstileWidget
+              key={turnstileResetKey}
+              onToken={setTurnstileToken}
+            />
+
             <div className="graduate-upload-submit">
               <p>선택한 파일은 지원 검토 목적으로 교수님 이메일에 첨부됩니다.</p>
-              <button type="submit" disabled={!graduateFile || status.type === "sending"}>
+              <button
+                type="submit"
+                disabled={
+                  !graduateFile ||
+                  status.type === "sending" ||
+                  (Boolean(turnstileSiteKey) && !turnstileToken)
+                }
+              >
                 <span>{status.type === "sending" ? "Sending file" : "Send application file"}</span>
                 <span aria-hidden="true">↗</span>
               </button>

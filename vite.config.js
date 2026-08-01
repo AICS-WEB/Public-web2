@@ -1,7 +1,5 @@
 import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
-import contactHandler from './api/contact.js'
-import undergraduateApplicationsHandler from './api/undergraduate-applications.js'
 import graduateApplicationsHandler from './api/graduate-applications.js'
 
 function registerLocalApi(server, route, handler) {
@@ -45,12 +43,6 @@ function localApplicationApis() {
   return {
     name: 'local-application-apis',
     configureServer(server) {
-      registerLocalApi(server, '/api/contact', contactHandler)
-      registerLocalApi(
-        server,
-        '/api/undergraduate-applications',
-        undergraduateApplicationsHandler,
-      )
       registerLocalApi(
         server,
         '/api/graduate-applications',
@@ -66,6 +58,11 @@ export default defineConfig(({ mode }) => {
   process.env.RESEND_API_KEY = env.RESEND_API_KEY
   process.env.RESEND_FROM_EMAIL = env.RESEND_FROM_EMAIL
   process.env.CONTACT_TO_EMAIL = env.CONTACT_TO_EMAIL
+  if (env.TURNSTILE_SECRET_KEY) {
+    process.env.TURNSTILE_SECRET_KEY = env.TURNSTILE_SECRET_KEY
+  } else {
+    delete process.env.TURNSTILE_SECRET_KEY
+  }
 
   return {
     plugins: [react(), localApplicationApis()],
