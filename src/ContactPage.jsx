@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   fetchResearchFields,
   graduateApplicationSettings,
+  submitUndergraduateApplication,
   undergraduateApplicationTypes,
 } from "./data/contact.js";
 
@@ -59,29 +60,56 @@ export default function ContactPage({ siteSettings }) {
       .map(({ id }) => String(formData.get(`portfolioLink_${id}`) || "").trim())
       .filter(Boolean);
 
+    if (data.website) return;
+
+    const githubUrl = data.portfolioLinks.find((url) =>
+      /^https?:\/\/(?:www\.)?github\.com\//i.test(url),
+    );
+    const portfolioUrl = data.portfolioLinks.find((url) => url !== githubUrl);
+    const interestArea = data.researchInterest === "기타"
+      ? data.otherResearchInterest
+      : data.researchInterest;
+    const introduction = [
+      `지원 유형: ${data.applicationType}`,
+      data.message,
+      data.portfolioLinks.length > 0
+        ? `관련 링크:\n${data.portfolioLinks.join("\n")}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n\n")
+      .slice(0, 5000);
+
     setStatus({ type: "sending", message: "지원서를 전송하고 있습니다…" });
 
     try {
-      const response = await fetch("/api/undergraduate-applications", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const result = await submitUndergraduateApplication({
+        targetTerm: data.availableFrom,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        department: data.affiliation,
+        grade: data.academicStatus,
+        interestArea,
+        introduction,
+        githubUrl: githubUrl?.slice(0, 255) || null,
+        portfolioUrl: portfolioUrl?.slice(0, 255) || null,
+        privacyConsent: data.privacyConsent === "agreed",
       });
-      const result = await response.json();
-
-      if (!response.ok || !result.success) throw new Error();
 
       form.reset();
       setResearchInterest("");
       setPortfolioLinks([{ id: nextLinkId.current++ }]);
       setStatus({
         type: "success",
-        message: `학부 연구생 지원 더미 API 접수가 완료되었습니다. 테스트 번호: ${result.applicationId} (현재 DB에는 저장되지 않습니다.)`,
+        message: `학부 연구생 지원서가 접수되었습니다. 접수번호: ${result.id}`,
       });
-    } catch {
+    } catch (error) {
       setStatus({
         type: "error",
-        message: "지원서를 보내지 못했습니다. 잠시 후 다시 시도하거나 위의 양식으로 이메일로 직접 문의해 주세요.",
+        message: error.status === 409
+          ? "같은 이메일과 참여 가능 시기로 접수된 지원서가 이미 있습니다."
+          : "지원서를 보내지 못했습니다. 잠시 후 다시 시도하거나 위의 양식으로 이메일로 직접 문의해 주세요.",
       });
     }
   };
@@ -214,28 +242,28 @@ export default function ContactPage({ siteSettings }) {
         <form className="application-form is-visible" onSubmit={handleUndergraduateSubmit} key={applicantPath}>
           <div className="application-route-notice application-route-notice--undergraduate">
             <span>Undergraduate application</span>
-            <p>현재는 더미 API로 접수 흐름만 확인하며, 입력 내용은 DB에 저장되지 않습니다.</p>
+            <p>제출한 지원서는 연구실 지원 시스템에 안전하게 저장됩니다.</p>
           </div>
           <div className="application-form-grid">
             <label className="application-field">
               <span>이름 *</span>
-              <input name="name" type="text" autoComplete="name" required placeholder="홍길동" />
+              <input name="name" type="text" autoComplete="name" maxLength="100" required placeholder="홍길동" />
             </label>
             <label className="application-field">
               <span>이메일 *</span>
-              <input name="email" type="email" autoComplete="email" required placeholder="name@example.com" />
+              <input name="email" type="email" autoComplete="email" maxLength="255" required placeholder="name@example.com" />
             </label>
             <label className="application-field">
               <span>연락처 *</span>
-              <input name="phone" type="tel" inputMode="tel" autoComplete="tel" required placeholder="010-1234-5678" />
+              <input name="phone" type="tel" inputMode="tel" autoComplete="tel" maxLength="20" required placeholder="010-1234-5678" />
             </label>
             <label className="application-field">
               <span>소속 학교 / 기관 *</span>
-              <input name="affiliation" type="text" required placeholder="순천향대학교" />
+              <input name="affiliation" type="text" maxLength="100" required placeholder="순천향대학교" />
             </label>
             <label className="application-field">
               <span>학과 및 학년 *</span>
-              <input name="academicStatus" type="text" required placeholder="컴퓨터소프트웨어공학과 3학년" />
+              <input name="academicStatus" type="text" maxLength="50" required placeholder="컴퓨터소프트웨어공학과 3학년" />
             </label>
             <label className="application-field">
               <span>지원 유형 *</span>
@@ -248,7 +276,7 @@ export default function ContactPage({ siteSettings }) {
             </label>
             <label className="application-field">
               <span>참여 가능 시기 *</span>
-              <input name="availableFrom" type="text" required placeholder="예: 2026년 9월부터" />
+              <input name="availableFrom" type="text" maxLength="50" required placeholder="예: 2026년 9월부터" />
             </label>
           </div>
 
@@ -317,6 +345,7 @@ export default function ContactPage({ siteSettings }) {
                       name={`portfolioLink_${link.id}`}
                       type="url"
                       inputMode="url"
+                      maxLength="255"
                       aria-label={`포트폴리오 또는 GitHub 링크 ${index + 1}`}
                       placeholder="https://"
                     />

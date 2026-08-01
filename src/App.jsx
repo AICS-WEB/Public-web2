@@ -693,6 +693,13 @@ export default function App() {
         if (error.name !== "AbortError") console.error(error);
       });
 
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (location.pathname !== "/") return undefined;
+
+    const controller = new AbortController();
     fetchHomeContent({ signal: controller.signal })
       .then(setHomeContent)
       .catch((error) => {
@@ -700,7 +707,7 @@ export default function App() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [location.pathname]);
 
   const { siteSettings, homeSettings } = siteContent;
 

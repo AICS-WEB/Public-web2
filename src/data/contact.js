@@ -13,6 +13,25 @@ export async function fetchResearchFields({ signal } = {}) {
     : [];
 }
 
+export async function submitUndergraduateApplication(application) {
+  const response = await fetch(`${apiBaseUrl}/api/public/applications`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(application),
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok || !payload?.success || !payload.data) {
+    const error = new Error(
+      payload?.message || "지원서를 접수하지 못했습니다.",
+    );
+    error.status = response.status;
+    throw error;
+  }
+
+  return payload.data;
+}
+
 export const undergraduateApplicationTypes = [
   "학부 연구생",
   "학부 연구 인턴",
