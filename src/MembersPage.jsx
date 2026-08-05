@@ -30,7 +30,7 @@ export default function MembersPage() {
     return () => controller.abort();
   }, []);
 
-  const { currentMembers, alumni, theses, counts } = members;
+  const { currentMembers, alumni, theses } = members;
 
   return (
     <main className="members-page">
@@ -43,27 +43,6 @@ export default function MembersPage() {
         <h1 className="members-page-title members-page-enter" id="members-title">
           Members
         </h1>
-
-        <div className="members-page-intro members-page-enter">
-          <p>
-            A collaborative group exploring intelligent systems through
-            research, engineering, and human-centered problem solving.
-          </p>
-          <dl>
-            <div>
-              <dt>Current</dt>
-              <dd>{String(counts.current).padStart(2, "0")}</dd>
-            </div>
-            <div>
-              <dt>Alumni profiles</dt>
-              <dd>{String(counts.alumni).padStart(2, "0")}</dd>
-            </div>
-            <div>
-              <dt>Master&apos;s theses</dt>
-              <dd>{String(theses.length).padStart(2, "0")}</dd>
-            </div>
-          </dl>
-        </div>
       </section>
 
       <section className="current-members-section" id="current-members">
@@ -85,7 +64,7 @@ export default function MembersPage() {
         )}
 
         <div className="member-grid">
-          {currentMembers.map((member, index) => (
+          {currentMembers.map((member) => (
             <article
               className="member-card is-visible"
               data-reveal
@@ -93,7 +72,6 @@ export default function MembersPage() {
             >
               <div className="member-photo">
                 <img src={member.image} alt={`${member.name} 프로필`} loading="lazy" />
-                <span>{String(index + 1).padStart(2, "0")}</span>
               </div>
               <div className="member-card-info">
                 <h3>{member.name}</h3>

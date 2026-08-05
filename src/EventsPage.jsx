@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchLabEvents } from "./data/events.js";
 
 export default function EventsPage() {
@@ -24,17 +24,6 @@ export default function EventsPage() {
   }, []);
 
   const eventCount = String(events.length).padStart(2, "0");
-  const cityCount = String(
-    new Set(events.map((event) => event.location).filter(Boolean)).size,
-  ).padStart(2, "0");
-  const archive = useMemo(() => {
-    const years = events.map((event) => event.year).filter(Boolean);
-    if (years.length === 0) return "—";
-
-    const first = Math.min(...years.map(Number));
-    const last = Math.max(...years.map(Number));
-    return first === last ? String(first) : `${first}—${last}`;
-  }, [events]);
 
   return (
     <main className="events-page">
@@ -51,27 +40,6 @@ export default function EventsPage() {
         <h1 className="events-page-title events-page-enter" id="events-title">
           Events
         </h1>
-
-        <div className="events-page-intro events-page-enter">
-          <p>
-            Research shared beyond the lab through workshops, conference
-            sessions, academic exchange, and conversations in the field.
-          </p>
-          <dl>
-            <div>
-              <dt>Events</dt>
-              <dd>{eventCount}</dd>
-            </div>
-            <div>
-              <dt>Cities</dt>
-              <dd>{cityCount}</dd>
-            </div>
-            <div>
-              <dt>Archive</dt>
-              <dd>{archive}</dd>
-            </div>
-          </dl>
-        </div>
       </section>
 
       <section className="events-archive" id="events-archive">

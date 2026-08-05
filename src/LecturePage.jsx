@@ -40,7 +40,6 @@ export default function LecturePage() {
     [schedule.semesterData],
   );
   const activeSemester = schedule.semesterData[semester];
-  const semesterCount = semesterEntries.length;
 
   return (
     <main className="lecture-page">
@@ -57,27 +56,6 @@ export default function LecturePage() {
         <h1 className="lecture-page-title lecture-page-enter" id="lecture-title">
           Lectures
         </h1>
-
-        <div className="lecture-page-intro lecture-page-enter">
-          <p>
-            Courses connecting software fundamentals with intelligent systems,
-            human-centered interaction, and practical engineering.
-          </p>
-          <dl>
-            <div>
-              <dt>Courses</dt>
-              <dd>{String(schedule.courseCount).padStart(2, "0")}</dd>
-            </div>
-            <div>
-              <dt>Semesters</dt>
-              <dd>{String(semesterCount).padStart(2, "0")}</dd>
-            </div>
-            <div>
-              <dt>Academic year</dt>
-              <dd>{schedule.academicYear || "—"}</dd>
-            </div>
-          </dl>
-        </div>
       </section>
 
       <section className="lecture-timetable" id="lecture-schedule">

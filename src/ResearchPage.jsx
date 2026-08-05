@@ -29,7 +29,7 @@ export default function ResearchPage() {
     return () => controller.abort();
   }, []);
 
-  const { researchAreas, researchProjects, activeThrough } = content;
+  const { researchAreas, researchProjects } = content;
 
   return (
     <main className="research-page">
@@ -49,27 +49,6 @@ export default function ResearchPage() {
         >
           Research
         </h1>
-
-        <div className="research-page-intro research-page-enter">
-          <p>
-            We develop practical AI systems that can predict, understand, and
-            explain—while remaining useful to the people they are designed for.
-          </p>
-          <dl>
-            <div>
-              <dt>Core areas</dt>
-              <dd>{String(researchAreas.length).padStart(2, "0")}</dd>
-            </div>
-            <div>
-              <dt>Projects</dt>
-              <dd>{String(researchProjects.length).padStart(2, "0")}</dd>
-            </div>
-            <div>
-              <dt>Active through</dt>
-              <dd>{activeThrough || "—"}</dd>
-            </div>
-          </dl>
-        </div>
       </section>
 
       <section className="research-directions" id="research-areas">

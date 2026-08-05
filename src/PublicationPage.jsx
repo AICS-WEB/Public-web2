@@ -167,27 +167,6 @@ export default function PublicationPage() {
         >
           Publications
         </h1>
-
-        <div className="publication-hero-summary publication-page-enter">
-          <p>
-            Research across artificial intelligence, financial forecasting,
-            digital accessibility, visual understanding, and typography.
-          </p>
-          <dl>
-            <div>
-              <dt>Works</dt>
-              <dd>{archive.publicationCount}</dd>
-            </div>
-            <div>
-              <dt>Years</dt>
-              <dd>{archive.years.length}</dd>
-            </div>
-            <div>
-              <dt>Latest</dt>
-              <dd>{archive.latestYear || "—"}</dd>
-            </div>
-          </dl>
-        </div>
       </section>
 
       <section className="publication-archive" id="publication-archive">

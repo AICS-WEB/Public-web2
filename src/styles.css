@@ -821,6 +821,11 @@ button {
     );
 }
 
+.studio .section-intro h2 {
+  align-self: end;
+  margin-bottom: clamp(28px, 2.5vw, 48px);
+}
+
 .publication-grid {
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -1203,8 +1208,8 @@ button {
 }
 
 .publication-hero {
-  min-height: 100svh;
-  padding: clamp(96px, 8vw, 150px) 24px clamp(90px, 10vw, 190px);
+  min-height: auto;
+  padding: 76px 24px 28px;
   overflow: hidden;
 }
 
@@ -1220,8 +1225,8 @@ button {
 }
 
 .publication-page-title {
-  margin: clamp(60px, 8vw, 145px) 0 clamp(90px, 11vw, 200px);
-  font-size: clamp(88px, 11vw, 211px);
+  margin: 20px 0 0;
+  font-size: clamp(42px, 4.75vw, 91px);
   font-weight: 400;
   line-height: 0.68;
   letter-spacing: -0.085em;
@@ -1625,8 +1630,8 @@ button {
 }
 
 .research-page-hero {
-  min-height: 100svh;
-  padding: clamp(96px, 8vw, 150px) 24px clamp(90px, 10vw, 190px);
+  min-height: auto;
+  padding: 76px 24px 28px;
   overflow: hidden;
 }
 
@@ -1642,8 +1647,8 @@ button {
 }
 
 .research-page-title {
-  margin: clamp(45px, 6vw, 110px) 0 clamp(80px, 9vw, 170px);
-  font-size: clamp(106px, 15.14vw, 290px);
+  margin: 20px 0 0;
+  font-size: clamp(48px, 6.25vw, 120px);
   font-weight: 400;
   line-height: 0.68;
   letter-spacing: -0.09em;
@@ -1956,8 +1961,8 @@ button {
 }
 
 .lecture-hero {
-  min-height: 100svh;
-  padding: clamp(96px, 8vw, 150px) 24px clamp(90px, 10vw, 190px);
+  min-height: auto;
+  padding: 76px 24px 28px;
   overflow: hidden;
 }
 
@@ -1973,8 +1978,8 @@ button {
 }
 
 .lecture-page-title {
-  margin: clamp(45px, 6vw, 110px) 0 clamp(80px, 9vw, 170px);
-  font-size: clamp(106px, 15.14vw, 290px);
+  margin: 20px 0 0;
+  font-size: clamp(48px, 6.25vw, 120px);
   font-weight: 400;
   line-height: 0.68;
   letter-spacing: -0.09em;
@@ -2372,8 +2377,8 @@ button {
 }
 
 .members-hero {
-  min-height: 100svh;
-  padding: clamp(96px, 8vw, 150px) 24px clamp(90px, 10vw, 190px);
+  min-height: auto;
+  padding: 76px 24px 28px;
   overflow: hidden;
 }
 
@@ -2389,8 +2394,8 @@ button {
 }
 
 .members-page-title {
-  margin: clamp(45px, 6vw, 110px) 0 clamp(80px, 9vw, 170px);
-  font-size: clamp(106px, 15.14vw, 290px);
+  margin: 20px 0 0;
+  font-size: clamp(48px, 6.25vw, 120px);
   font-weight: 400;
   line-height: 0.68;
   letter-spacing: -0.09em;
@@ -2521,8 +2526,8 @@ button {
 
 .member-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(54px, 7vw, 130px) clamp(18px, 2vw, 38px);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(44px, 5vw, 90px) clamp(12px, 1.2vw, 24px);
 }
 
 .member-card {
@@ -2546,26 +2551,9 @@ button {
   height: 100%;
   object-fit: cover;
   object-position: center top;
-  filter: grayscale(1) contrast(1.03);
+  filter: none;
   transform: scale(1.005);
-  transition:
-    filter 0.45s ease,
-    transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-.member-photo > span {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  color: var(--paper);
-  background: var(--accent);
-  border-radius: 50%;
-  font-size: 10px;
-  font-weight: 700;
+  transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .member-card-info {
@@ -2579,7 +2567,7 @@ button {
 .member-card-info h3 {
   grid-column: 1 / 3;
   margin: 0 0 18px;
-  font-size: clamp(33px, 3.96vw, 76px);
+  font-size: clamp(24px, 2.4vw, 46px);
   font-weight: 400;
   line-height: 0.82;
   letter-spacing: -0.065em;
@@ -2598,7 +2586,6 @@ button {
 }
 
 .member-card:hover .member-photo img {
-  filter: grayscale(0) contrast(1);
   transform: scale(1.045);
 }
 
@@ -2755,8 +2742,8 @@ button {
 }
 
 .events-hero {
-  min-height: 100svh;
-  padding: clamp(96px, 8vw, 150px) 24px clamp(90px, 10vw, 190px);
+  min-height: auto;
+  padding: 76px 24px 28px;
   overflow: hidden;
 }
 
@@ -2772,8 +2759,8 @@ button {
 }
 
 .events-page-title {
-  margin: clamp(45px, 6vw, 110px) 0 clamp(80px, 9vw, 170px);
-  font-size: clamp(106px, 15.14vw, 290px);
+  margin: 20px 0 0;
+  font-size: clamp(48px, 6.25vw, 120px);
   font-weight: 400;
   line-height: 0.68;
   letter-spacing: -0.09em;
@@ -2935,7 +2922,7 @@ button {
 
 .event-entry-heading > div > span {
   display: block;
-  margin-bottom: clamp(30px, 4vw, 72px);
+  margin-bottom: clamp(20px, 2vw, 36px);
   color: var(--accent);
 }
 
@@ -2958,7 +2945,7 @@ button {
 .event-entry-details {
   display: grid;
   width: 66%;
-  margin: clamp(80px, 9vw, 165px) 0 clamp(52px, 6vw, 110px) auto;
+  margin: clamp(44px, 4vw, 72px) 0 clamp(36px, 4vw, 72px) auto;
   grid-template-columns: 0.65fr 1.35fr;
   gap: clamp(24px, 5vw, 95px);
 }
@@ -2978,7 +2965,9 @@ button {
 
 .event-gallery {
   display: grid;
-  height: clamp(650px, 57vw, 1080px);
+  width: 82%;
+  height: clamp(460px, 38vw, 720px);
+  margin-left: auto;
   grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr);
   gap: clamp(14px, 1.5vw, 28px);
   align-items: start;
@@ -3002,15 +2991,12 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.04);
+  filter: none;
   transform: scale(1.005);
-  transition:
-    filter 0.45s ease,
-    transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .event-gallery figure:hover img {
-  filter: grayscale(0) contrast(1);
   transform: scale(1.035);
 }
 
@@ -3043,7 +3029,7 @@ button {
 
 .profile-hero {
   min-height: 100svh;
-  padding: clamp(96px, 8vw, 150px) 24px clamp(60px, 8vw, 150px);
+  padding: 76px 24px clamp(60px, 8vw, 150px);
   overflow: hidden;
 }
 
@@ -3059,8 +3045,8 @@ button {
 }
 
 .profile-title {
-  margin: clamp(34px, 5vw, 90px) 0 clamp(52px, 6vw, 110px);
-  font-size: clamp(92px, 17.6vw, 339px);
+  margin: 20px 0 32px;
+  font-size: clamp(44px, 7vw, 135px);
   font-weight: 400;
   line-height: 0.68;
   letter-spacing: -0.09em;
@@ -3069,14 +3055,14 @@ button {
 
 .profile-hero-grid {
   display: grid;
-  grid-template-columns: minmax(280px, 0.65fr) minmax(0, 1.35fr);
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
   gap: clamp(24px, 4vw, 76px);
-  align-items: stretch;
+  align-items: start;
 }
 
 .profile-identity {
   display: flex;
-  min-height: clamp(540px, 54vw, 920px);
+  min-height: clamp(500px, 46vw, 720px);
   flex-direction: column;
   justify-content: space-between;
   padding-top: 10px;
@@ -3129,16 +3115,18 @@ button {
 }
 
 .profile-contact > p {
-  max-width: 34ch;
-  margin: clamp(42px, 5vw, 84px) 0 0;
-  font-size: clamp(19px, 1.98vw, 38px);
-  line-height: 1.02;
+  max-width: 30ch;
+  margin: clamp(34px, 4vw, 64px) 0 0;
+  font-size: clamp(19px, 1.65vw, 32px);
+  line-height: 1.08;
   letter-spacing: -0.04em;
 }
 
 .profile-portrait-space {
   position: relative;
-  min-height: clamp(620px, 58vw, 1040px);
+  width: min(100%, 640px);
+  aspect-ratio: 4 / 5;
+  justify-self: end;
   overflow: hidden;
   border: 1px solid rgba(25, 25, 25, 0.18);
   background:
@@ -3159,10 +3147,11 @@ button {
 }
 
 .profile-portrait-space img {
+  display: block;
   width: 100%;
   height: 100%;
-  min-height: inherit;
   object-fit: cover;
+  object-position: center top;
 }
 
 .profile-data-state {
@@ -3241,6 +3230,7 @@ button {
   font-weight: 400;
   line-height: 0.78;
   letter-spacing: -0.075em;
+  transform: translateY(clamp(40px, 4.5vw, 86px));
 }
 
 .profile-history-content {
@@ -3371,8 +3361,8 @@ button {
 }
 
 .contact-hero {
-  min-height: 100svh;
-  padding: clamp(96px, 8vw, 150px) 24px clamp(90px, 10vw, 190px);
+  min-height: auto;
+  padding: 76px 24px 64px;
   overflow: hidden;
 }
 
@@ -3388,8 +3378,8 @@ button {
 }
 
 .contact-title {
-  margin: clamp(42px, 6vw, 110px) 0 clamp(70px, 8vw, 150px);
-  font-size: clamp(84px, 17.6vw, 339px);
+  margin: 20px 0 32px;
+  font-size: clamp(42px, 7vw, 135px);
   font-weight: 400;
   line-height: 0.68;
   letter-spacing: -0.09em;
@@ -3406,11 +3396,11 @@ button {
 }
 
 .contact-hero-copy > p {
-  max-width: 18ch;
+  max-width: none;
   margin: 0;
-  font-size: clamp(32px, 4.4vw, 84px);
-  line-height: 0.9;
-  letter-spacing: -0.055em;
+  font-size: clamp(26px, 2.8vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
   word-break: keep-all;
 }
 
@@ -4364,20 +4354,7 @@ button {
   }
 
   .top-navigation {
-    display: flex;
-    min-width: 0;
-    justify-content: center;
-    gap: clamp(6px, 2vw, 11px);
-    overflow: hidden;
-    font-size: clamp(7px, 2.1vw, 10px);
-    white-space: nowrap;
-    transition: opacity 0.25s, visibility 0.25s;
-  }
-
-  .site-header--open .top-navigation {
-    visibility: hidden;
-    pointer-events: none;
-    opacity: 0;
+    display: none;
   }
 
   .site-header--open .brand,
@@ -4609,12 +4586,12 @@ button {
 
   .publication-hero {
     min-height: auto;
-    padding: 94px 16px 120px;
+    padding: 76px 16px 28px;
   }
 
   .publication-page-title {
-    margin: 52px 0 92px;
-    font-size: clamp(37px, 9.68vw, 70px);
+    margin: 20px 0 0;
+    font-size: clamp(28px, 6.5vw, 44px);
   }
 
   .publication-hero-summary {
@@ -4731,12 +4708,12 @@ button {
 
   .research-page-hero {
     min-height: auto;
-    padding: 94px 16px 120px;
+    padding: 76px 16px 28px;
   }
 
   .research-page-title {
-    margin: 52px 0 92px;
-    font-size: clamp(63px, 18.48vw, 132px);
+    margin: 20px 0 0;
+    font-size: clamp(36px, 10vw, 72px);
   }
 
   .research-page-intro {
@@ -4851,12 +4828,12 @@ button {
 
   .lecture-hero {
     min-height: auto;
-    padding: 94px 16px 120px;
+    padding: 76px 16px 28px;
   }
 
   .lecture-page-title {
-    margin: 52px 0 92px;
-    font-size: clamp(60px, 16.72vw, 121px);
+    margin: 20px 0 0;
+    font-size: clamp(34px, 9vw, 68px);
   }
 
   .lecture-page-intro {
@@ -4960,12 +4937,12 @@ button {
 
   .members-hero {
     min-height: auto;
-    padding: 94px 16px 120px;
+    padding: 76px 16px 28px;
   }
 
   .members-page-title {
-    margin: 52px 0 92px;
-    font-size: clamp(60px, 16.72vw, 121px);
+    margin: 20px 0 0;
+    font-size: clamp(34px, 9vw, 68px);
   }
 
   .members-page-intro {
@@ -5029,14 +5006,6 @@ button {
     font-size: 9px;
   }
 
-  .member-photo > span {
-    top: 8px;
-    left: 8px;
-    width: 28px;
-    height: 28px;
-    font-size: 9px;
-  }
-
   .alumni-grid {
     grid-template-columns: 1fr;
   }
@@ -5090,12 +5059,12 @@ button {
 
   .events-hero {
     min-height: auto;
-    padding: 94px 16px 120px;
+    padding: 76px 16px 28px;
   }
 
   .events-page-title {
-    margin: 52px 0 92px;
-    font-size: clamp(63px, 18.48vw, 132px);
+    margin: 20px 0 0;
+    font-size: clamp(36px, 10vw, 72px);
   }
 
   .events-page-intro {
@@ -5149,7 +5118,7 @@ button {
   }
 
   .event-entry-heading > div > span {
-    margin-bottom: 34px;
+    margin-bottom: 22px;
   }
 
   .event-entry-heading h3 {
@@ -5165,7 +5134,7 @@ button {
 
   .event-entry-details {
     width: 100%;
-    margin: 70px 0 60px;
+    margin: 44px 0 42px;
     grid-template-columns: 1fr;
     gap: 42px;
     padding-left: 44px;
@@ -5194,21 +5163,21 @@ button {
   }
 
   .profile-hero {
-    padding: 94px 16px 96px;
+    padding: 76px 16px 96px;
   }
 
   .profile-title {
-    margin: 42px 0 64px;
-    font-size: clamp(67px, 19.36vw, 158px);
+    margin: 18px 0 28px;
+    font-size: clamp(36px, 10vw, 82px);
   }
 
   .profile-hero-grid {
     grid-template-columns: 1fr;
-    gap: 54px;
+    gap: 48px;
   }
 
   .profile-identity {
-    min-height: 620px;
+    min-height: 0;
   }
 
   .profile-label {
@@ -5216,11 +5185,12 @@ button {
   }
 
   .profile-contact > p {
-    margin-top: 52px;
+    margin-top: 34px;
   }
 
   .profile-portrait-space {
-    min-height: 122vw;
+    width: min(78vw, 440px);
+    aspect-ratio: 4 / 5;
   }
 
   .profile-section {
@@ -5284,12 +5254,12 @@ button {
   }
 
   .contact-hero {
-    padding: 94px 16px 110px;
+    padding: 76px 16px 64px;
   }
 
   .contact-title {
-    margin: 42px 0 72px;
-    font-size: clamp(61px, 17.2vw, 140px);
+    margin: 18px 0 32px;
+    font-size: clamp(34px, 9.5vw, 78px);
   }
 
   .contact-hero-copy {
@@ -5299,7 +5269,7 @@ button {
   }
 
   .contact-hero-copy > p {
-    font-size: clamp(34px, 9.8vw, 64px);
+    font-size: clamp(24px, 6.6vw, 38px);
   }
 
   .contact-hero-copy dl > div {
