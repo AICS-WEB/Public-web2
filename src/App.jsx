@@ -387,11 +387,7 @@ function Studio({ publications }) {
         <h2>
           Key Research Areas <Arrow />
         </h2>
-        <p>
-          We research practical AI technologies for prediction, accessibility,
-          visual understanding, and explainability, building intelligent systems
-          that are useful, transparent, and human-centered.
-        </p>{" "}
+
       </div>
       <div className="publication-grid" data-reveal>
         {publications.map((publication, index) => (
@@ -460,10 +456,7 @@ function Activity() {
           </h2>
         </div>
         <div className="activity-intro-copy">
-          <p>
-            Research in motion—presentations, academic exchange, and moments
-            from the field beyond our lab.
-          </p>
+
           <a href="/events">
             View all activities <Arrow />
           </a>
