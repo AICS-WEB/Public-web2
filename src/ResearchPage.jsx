@@ -133,7 +133,7 @@ export default function ResearchPage() {
               <span className="research-project-number">
                 {String(researchProjects.length - index).padStart(2, "0")}
               </span>
-              <time>{project.period}</time>
+              <time>{project.dateRange || "—"}</time>
               <div className="research-project-main">
                 <h3>{project.title}</h3>
                 <p>{project.program}</p>

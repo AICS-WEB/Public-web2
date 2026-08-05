@@ -11,11 +11,25 @@ async function fetchPublicResource(path, signal) {
   return payload.data;
 }
 
+function formatProjectDate(value) {
+  const match = String(value || "").match(/^((?:19|20)\d{2})-(\d{2})/);
+  return match ? `${match[1]}.${match[2]}` : "";
+}
+
+function formatProjectDateRange(startDate, endDate) {
+  return [formatProjectDate(startDate), formatProjectDate(endDate)]
+    .filter(Boolean)
+    .join(" — ");
+}
+
 function activeThrough(projects) {
-  const years = projects.flatMap((project) =>
-    String(project.period || "").match(/\b(?:19|20)\d{2}\b/g) || [],
-  );
-  return years.length ? Math.max(...years.map(Number)) : null;
+  const years = projects
+    .flatMap((project) => [project.startDate, project.endDate])
+    .map((date) => String(date || "").match(/^((?:19|20)\d{2})/)?.[1])
+    .filter(Boolean)
+    .map(Number);
+
+  return years.length ? Math.max(...years) : null;
 }
 
 export async function fetchResearchContent({ signal } = {}) {
@@ -34,7 +48,9 @@ export async function fetchResearchContent({ signal } = {}) {
 
   const researchProjects = projectRows.map((project) => ({
     id: project.id,
-    period: project.period,
+    startDate: project.start_date,
+    endDate: project.end_date,
+    dateRange: formatProjectDateRange(project.start_date, project.end_date),
     title: project.title,
     program: project.program || project.funding_agency,
     role: project.role,
