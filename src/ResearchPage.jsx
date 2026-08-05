@@ -139,7 +139,9 @@ export default function ResearchPage() {
                 <p>{project.program}</p>
               </div>
               <div className="research-project-meta">
-                <strong>{project.role}</strong>
+                <strong>
+                  {[project.owner, project.role].filter(Boolean).join(" · ")}
+                </strong>
                 <span className={project.status === "Ongoing" ? "is-active" : ""}>
                   {project.status}
                 </span>

@@ -53,6 +53,7 @@ export async function fetchResearchContent({ signal } = {}) {
     dateRange: formatProjectDateRange(project.start_date, project.end_date),
     title: project.title,
     program: project.program || project.funding_agency,
+    owner: project.owner,
     role: project.role,
     status: project.status,
   }));
