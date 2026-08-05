@@ -21,6 +21,9 @@ function normalizeMember(member) {
     bio: member.bio,
     githubUrl: member.github_url,
     linkedinUrl: member.linkedin_url,
+    degree: member.degree || "",
+    history: Array.isArray(member.history) ? member.history : [],
+    interests: Array.isArray(member.interests) ? member.interests : [],
   };
 }
 

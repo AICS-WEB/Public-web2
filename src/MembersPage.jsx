@@ -99,9 +99,9 @@ export default function MembersPage() {
               <div className="alumni-card-top">
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <span>
-                  {member.graduationYear
+                  {member.degree || (member.graduationYear
                     ? `${member.program} · ${member.graduationYear}`
-                    : member.program}
+                    : member.program)}
                 </span>
               </div>
               <h3>{member.name}</h3>
@@ -109,23 +109,36 @@ export default function MembersPage() {
                 <div>
                   <h4>Background</h4>
                   <ul>
-                    {member.department && <li>{member.department}</li>}
-                    {member.enrollmentYear && (
-                      <li>
-                        {member.enrollmentYear}
-                        {member.graduationYear
-                          ? ` — ${member.graduationYear}`
-                          : ""}
-                      </li>
-                    )}
+                    {member.history.length > 0
+                      ? member.history.map((item) => <li key={item}>{item}</li>)
+                      : (
+                        <>
+                          {member.department && <li>{member.department}</li>}
+                          {member.enrollmentYear && (
+                            <li>
+                              {member.enrollmentYear}
+                              {member.graduationYear
+                                ? ` — ${member.graduationYear}`
+                                : ""}
+                            </li>
+                          )}
+                        </>
+                      )}
                   </ul>
                 </div>
                 <div>
                   <h4>Research interests</h4>
                   <ul>
-                    {member.researchTopic && <li>{member.researchTopic}</li>}
-                    {member.bio && <li>{member.bio}</li>}
-                    {!member.researchTopic && !member.bio && (
+                    {member.interests.length > 0
+                      ? member.interests.map((item) => <li key={item}>{item}</li>)
+                      : (
+                        <>
+                          {member.researchTopic && <li>{member.researchTopic}</li>}
+                          {member.bio && <li>{member.bio}</li>}
+                        </>
+                      )}
+                    {member.interests.length === 0 &&
+                      !member.researchTopic && !member.bio && (
                       <li>Profile details coming soon</li>
                     )}
                   </ul>
